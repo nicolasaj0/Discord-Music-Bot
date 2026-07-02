@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     curl \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Definir o diretório de trabalho
@@ -16,6 +17,11 @@ RUN chown -R node:node /app
 
 # Mudar para o usuário node
 USER node
+
+# Instalar Deno para o yt-dlp decifrar as assinaturas do YouTube
+ENV DENO_INSTALL="/home/node/.deno"
+RUN curl -fsSL https://deno.land/install.sh | sh
+ENV PATH="$DENO_INSTALL/bin:$PATH"
 
 # Copiar arquivos de dependências com a propriedade correta
 COPY --chown=node:node package*.json ./

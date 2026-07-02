@@ -164,7 +164,8 @@ export class GuildQueue {
         output: '-',
         format: 'bestaudio',
         limitRate: '1M',
-        noPlaylist: true
+        noPlaylist: true,
+        extractorArgs: 'youtube:player_client=android,web'
       });
 
       this.audioProcess = subprocess;

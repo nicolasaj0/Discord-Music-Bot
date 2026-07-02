@@ -59,7 +59,8 @@ export default {
         const playlistData = await youtubedl(query, {
           dumpSingleJson: true,
           flatPlaylist: true,
-          noWarnings: true
+          noWarnings: true,
+          extractorArgs: 'youtube:player_client=android,web'
         });
 
         if (!playlistData || !playlistData.entries) {
