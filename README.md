@@ -1,13 +1,3 @@
----
-title: Discord Music Bot
-emoji: 🎵
-colorFrom: violet
-colorTo: indigo
-sdk: docker
-pinned: false
-app_port: 7860
----
-
 # Discord Music Bot 🎵
 
 Um bot de música moderno, elegante e de alta performance para o Discord, com suporte para reprodução de conteúdos do **YouTube, Spotify, SoundCloud e Deezer** (faixas, álbuns e playlists) utilizando a tecnologia de **Slash Commands** (`/`) e respostas visuais premium (Embeds).
