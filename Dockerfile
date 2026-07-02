@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:22-slim
 
 # Instalar dependências do sistema necessárias (ffmpeg para áudio e python3 para yt-dlp)
 RUN apt-get update && apt-get install -y \
@@ -27,7 +27,7 @@ ENV PATH="$DENO_INSTALL/bin:$PATH"
 COPY --chown=node:node package*.json ./
 
 # Instalar as dependências de produção do Node.js
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Copiar o restante do código do bot
 COPY --chown=node:node . .
