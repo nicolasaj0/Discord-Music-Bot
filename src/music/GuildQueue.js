@@ -175,6 +175,12 @@ export class GuildQueue {
 
       const subprocess = youtubedl.exec(this.currentTrack.url, ytOptions);
 
+      // Evita o erro de Unhandled Promise Rejection (e flood de binários no log) quando o processo é finalizado ou morto
+      subprocess.catch((err) => {
+        if (subprocess.killed || err.signal === 'SIGTERM' || err.signal === 'SIGKILL') return;
+        console.error(`[yt-dlp] Processo finalizado com erro: ${err.message}`);
+      });
+
       this.audioProcess = subprocess;
 
       subprocess.on('error', (err) => {
