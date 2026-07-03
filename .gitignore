@@ -25,3 +25,6 @@ Thumbs.db
 
 # YouTube cookies
 cookies.txt
+
+# VM Guide (contains sensitive IP address and paths)
+VM_GUIDE.md

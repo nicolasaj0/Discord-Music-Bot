@@ -1,6 +1,7 @@
 import { SlashCommandBuilder , MessageFlags} from 'discord.js';
 import play from 'play-dl';
 import youtubedl from 'youtube-dl-exec';
+import fs from 'fs';
 import { queueManager } from '../music/QueueManager.js';
 import { createSuccessEmbed, createErrorEmbed, createMusicEmbed } from '../utils/embeds.js';
 import { formatDuration } from '../utils/formatter.js';
