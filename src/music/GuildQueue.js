@@ -9,6 +9,7 @@ import {
 import { EmbedBuilder } from 'discord.js';
 import play from 'play-dl';
 import youtubedl from 'youtube-dl-exec';
+import fs from 'fs';
 import { createMusicEmbed, createErrorEmbed } from '../utils/embeds.js';
 
 export class GuildQueue {
@@ -160,13 +161,19 @@ export class GuildQueue {
       }
 
       // Obtém o stream através do youtube-dl-exec (yt-dlp)
-      const subprocess = youtubedl.exec(this.currentTrack.url, {
+      const ytOptions = {
         output: '-',
         format: 'bestaudio',
         limitRate: '1M',
         noPlaylist: true,
         extractorArgs: 'youtube:player_client=android,web'
-      });
+      };
+
+      if (fs.existsSync('./cookies.txt')) {
+        ytOptions.cookies = './cookies.txt';
+      }
+
+      const subprocess = youtubedl.exec(this.currentTrack.url, ytOptions);
 
       this.audioProcess = subprocess;
 

@@ -56,12 +56,18 @@ export default {
 
       // 1. PLAYLIST DO YOUTUBE
       if (validation === 'yt_playlist') {
-        const playlistData = await youtubedl(query, {
+        const ytOptions = {
           dumpSingleJson: true,
           flatPlaylist: true,
           noWarnings: true,
           extractorArgs: 'youtube:player_client=android,web'
-        });
+        };
+
+        if (fs.existsSync('./cookies.txt')) {
+          ytOptions.cookies = './cookies.txt';
+        }
+
+        const playlistData = await youtubedl(query, ytOptions);
 
         if (!playlistData || !playlistData.entries) {
           throw new Error('Não foi possível obter os dados da playlist do YouTube.');

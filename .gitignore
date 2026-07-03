@@ -22,3 +22,6 @@ Thumbs.db
 
 # play-dl auth data
 .data/
+
+# YouTube cookies
+cookies.txt
