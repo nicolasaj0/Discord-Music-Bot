@@ -163,7 +163,7 @@ export class GuildQueue {
       // Obtém o stream através do youtube-dl-exec (yt-dlp)
       const ytOptions = {
         output: '-',
-        format: 'bestaudio',
+        format: 'bestaudio/best',
         limitRate: '1M',
         noPlaylist: true,
         extractorArgs: 'youtube:player_client=android,web'
