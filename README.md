@@ -42,7 +42,7 @@ Um bot de música moderno, elegante e de alta performance para o Discord, com su
 ### 1. Obter o Código
 Baixe os arquivos deste projeto ou clone o repositório em sua máquina:
 ```bash
-git clone <URL_DO_SEU_REPOSITORIO>
+git clone <[Discord-Music-Bot](https://github.com/nicolasaj0/Discord-Music-Bot)>
 cd DiscordBot
 ```
 
