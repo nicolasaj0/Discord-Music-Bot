@@ -8,33 +8,6 @@ import play from 'play-dl';
 // Carrega as variáveis de ambiente
 dotenv.config();
 
-// Carrega os cookies do YouTube para o play-dl evitar bloqueios (Sign in to confirm you're not a bot)
-try {
-  const cookiePath = path.join(process.cwd(), 'cookies.txt');
-  if (fs.existsSync(cookiePath)) {
-    const lines = fs.readFileSync(cookiePath, 'utf-8').split('\n');
-    const cookiePairs = [];
-    for (const line of lines) {
-      if (line.startsWith('#') || line.trim() === '') continue;
-      const parts = line.split('\t');
-      if (parts.length >= 7) {
-        cookiePairs.push(`${parts[5]}=${parts[6].trim()}`);
-      }
-    }
-    const cookieStr = cookiePairs.join('; ');
-    if (cookieStr) {
-      play.setToken({
-        youtube: { cookie: cookieStr }
-      });
-      console.log('✅ Cookies do YouTube injetados no play-dl com sucesso!');
-    }
-  } else {
-    console.warn('⚠️ Arquivo cookies.txt não encontrado. O play-dl rodará sem cookies (pode causar bloqueios).');
-  }
-} catch (err) {
-  console.error('❌ Erro ao tentar carregar cookies.txt para o play-dl:', err.message);
-}
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
