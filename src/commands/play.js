@@ -1,7 +1,5 @@
 import { SlashCommandBuilder , MessageFlags} from 'discord.js';
 import play from 'play-dl';
-import youtubedl from 'youtube-dl-exec';
-import fs from 'fs';
 import { queueManager } from '../music/QueueManager.js';
 import { createSuccessEmbed, createErrorEmbed, createMusicEmbed } from '../utils/embeds.js';
 import { formatDuration } from '../utils/formatter.js';
@@ -57,30 +55,21 @@ export default {
 
       // 1. PLAYLIST DO YOUTUBE
       if (validation === 'yt_playlist') {
-        const ytOptions = {
-          dumpSingleJson: true,
-          flatPlaylist: true,
-          noWarnings: true,
-          extractorArgs: 'youtube:player_client=android,web'
-        };
-
-        if (fs.existsSync('./cookies.txt')) {
-          ytOptions.cookies = './cookies.txt';
-        }
-
-        const playlistData = await youtubedl(query, ytOptions);
-
-        if (!playlistData || !playlistData.entries) {
+        const playlistData = await play.playlist_info(query, { incomplete: true });
+        
+        if (!playlistData) {
           throw new Error('Não foi possível obter os dados da playlist do YouTube.');
         }
 
-        tracksToAdd = playlistData.entries.map(video => ({
+        const videos = await playlistData.all_videos();
+
+        tracksToAdd = videos.map(video => ({
           title: video.title || 'Música do YouTube',
-          url: video.url || `https://www.youtube.com/watch?v=${video.id}`,
-          duration: (video.duration || 0) * 1000,
-          durationLabel: formatDuration((video.duration || 0) * 1000),
+          url: video.url,
+          duration: (video.durationInSec || 0) * 1000,
+          durationLabel: formatDuration((video.durationInSec || 0) * 1000),
           thumbnail: video.thumbnails?.[0]?.url || null,
-          author: video.uploader || 'Desconhecido',
+          author: video.channel?.name || 'Desconhecido',
           unresolved: false,
           platform: 'youtube',
           requestedBy: requester

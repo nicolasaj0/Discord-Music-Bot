@@ -8,8 +8,6 @@ import {
 } from '@discordjs/voice';
 import { EmbedBuilder } from 'discord.js';
 import play from 'play-dl';
-import youtubedl from 'youtube-dl-exec';
-import fs from 'fs';
 import { createMusicEmbed, createErrorEmbed } from '../utils/embeds.js';
 
 export class GuildQueue {
@@ -24,7 +22,6 @@ export class GuildQueue {
     this.player = null;
     this.textChannel = null;
     this.idleTimeout = null;
-    this.audioProcess = null; // Processo do yt-dlp ativo
   }
 
   /**
@@ -152,43 +149,11 @@ export class GuildQueue {
         }
       }
 
-      // Mata o processo de áudio anterior se ainda estiver ativo
-      if (this.audioProcess) {
-        try {
-          this.audioProcess.kill();
-        } catch (e) {}
-        this.audioProcess = null;
-      }
+      // Obtém o stream diretamente via play-dl
+      const stream = await play.stream(this.currentTrack.url);
 
-      // Obtém o stream através do youtube-dl-exec (yt-dlp)
-      const ytOptions = {
-        output: '-',
-        format: 'bestaudio/best',
-        limitRate: '1M',
-        noPlaylist: true,
-        extractorArgs: 'youtube:player_client=android,web'
-      };
-
-      if (fs.existsSync('./cookies.txt')) {
-        ytOptions.cookies = './cookies.txt';
-      }
-
-      const subprocess = youtubedl.exec(this.currentTrack.url, ytOptions);
-
-      // Evita o erro de Unhandled Promise Rejection (e flood de binários no log) quando o processo é finalizado ou morto
-      subprocess.catch((err) => {
-        if (subprocess.killed || err.signal === 'SIGTERM' || err.signal === 'SIGKILL') return;
-        console.error(`[yt-dlp] Processo finalizado com erro: ${err.message}`);
-      });
-
-      this.audioProcess = subprocess;
-
-      subprocess.on('error', (err) => {
-        console.error(`Erro no processo do yt-dlp da guild ${this.guildId}:`, err);
-      });
-
-      const resource = createAudioResource(subprocess.stdout, {
-        inputType: StreamType.Arbitrary,
+      const resource = createAudioResource(stream.stream, {
+        inputType: stream.type,
         inlineVolume: true
       });
 
@@ -237,13 +202,6 @@ export class GuildQueue {
    */
   skip() {
     if (!this.currentTrack) return false;
-    
-    if (this.audioProcess) {
-      try {
-        this.audioProcess.kill();
-      } catch (e) {}
-      this.audioProcess = null;
-    }
 
     this.player?.stop(); // Isso vai disparar o evento Idle e consequentemente o handleTrackEnd
     return true;
@@ -368,13 +326,6 @@ export class GuildQueue {
     this.clearIdleTimeout();
     this.tracks = [];
     this.currentTrack = null;
-    
-    if (this.audioProcess) {
-      try {
-        this.audioProcess.kill();
-      } catch (e) {}
-      this.audioProcess = null;
-    }
 
     this.player?.stop();
     this.player = null;
