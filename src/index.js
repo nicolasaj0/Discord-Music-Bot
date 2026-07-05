@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
-import play from 'play-dl';
 
 // Carrega as variáveis de ambiente
 dotenv.config();

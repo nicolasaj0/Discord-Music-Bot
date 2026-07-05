@@ -7,6 +7,10 @@ import { createSuccessEmbed, createErrorEmbed, createMusicEmbed } from '../utils
 import { formatDuration } from '../utils/formatter.js';
 import fetch from 'isomorphic-unfetch';
 import spotifyUrlInfo from 'spotify-url-info';
+
+// Cacheia a verificação de disco para evitar I/O bloqueante a cada música
+const HAS_COOKIES = fs.existsSync('./cookies.txt');
+
 const { getData, getTracks } = spotifyUrlInfo(fetch);
 
 export default {
@@ -64,7 +68,7 @@ export default {
           extractorArgs: 'youtube:player_client=android,web'
         };
 
-        if (fs.existsSync('./cookies.txt')) {
+        if (HAS_COOKIES) {
           ytOptions.cookies = './cookies.txt';
         }
 

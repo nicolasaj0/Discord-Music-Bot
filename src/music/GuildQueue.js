@@ -12,6 +12,9 @@ import youtubedl from 'youtube-dl-exec';
 import fs from 'fs';
 import { createMusicEmbed, createErrorEmbed } from '../utils/embeds.js';
 
+// Cacheia a verificação de disco para evitar I/O bloqueante a cada música
+const HAS_COOKIES = fs.existsSync('./cookies.txt');
+
 export class GuildQueue {
   constructor(guildId, manager) {
     this.guildId = guildId;
@@ -169,7 +172,7 @@ export class GuildQueue {
         extractorArgs: 'youtube:player_client=android,web'
       };
 
-      if (fs.existsSync('./cookies.txt')) {
+      if (HAS_COOKIES) {
         ytOptions.cookies = './cookies.txt';
       }
 
@@ -197,10 +200,29 @@ export class GuildQueue {
 
       this.player.play(resource);
 
-      // Envia notificação de reprodução
+      // Envia notificação de reprodução com botões (Painel do DJ)
       if (this.textChannel && this.currentTrack) {
+        const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = await import('discord.js');
+        
+        const row = new ActionRowBuilder()
+          .addComponents(
+            new ButtonBuilder()
+              .setCustomId('btn_play_pause')
+              .setLabel('⏯️ Pausar/Tocar')
+              .setStyle(ButtonStyle.Primary),
+            new ButtonBuilder()
+              .setCustomId('btn_skip')
+              .setLabel('⏭️ Pular')
+              .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
+              .setCustomId('btn_stop')
+              .setLabel('⏹️ Parar')
+              .setStyle(ButtonStyle.Danger)
+          );
+
         this.textChannel.send({
-          embeds: [createMusicEmbed(this.currentTrack, 'Tocando Agora', this.currentTrack.requestedBy)]
+          embeds: [createMusicEmbed(this.currentTrack, 'Tocando Agora', this.currentTrack.requestedBy)],
+          components: [row]
         }).catch(console.error);
       }
     } catch (error) {
