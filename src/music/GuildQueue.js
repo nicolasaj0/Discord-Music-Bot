@@ -169,7 +169,7 @@ export class GuildQueue {
         format: 'bestaudio/best',
         limitRate: '1M',
         noPlaylist: true,
-        extractorArgs: 'youtube:player_client=android,web'
+        extractorArgs: 'youtube:player_client=default,-android_sdkless'
       };
 
       if (HAS_COOKIES) {

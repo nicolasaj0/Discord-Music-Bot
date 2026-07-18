@@ -65,7 +65,7 @@ export default {
           dumpSingleJson: true,
           flatPlaylist: true,
           noWarnings: true,
-          extractorArgs: 'youtube:player_client=android,web'
+          extractorArgs: 'youtube:player_client=default,-android_sdkless'
         };
 
         if (HAS_COOKIES) {
