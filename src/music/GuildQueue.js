@@ -180,7 +180,7 @@ export class GuildQueue {
 
       // Evita o erro de Unhandled Promise Rejection (e flood de binários no log) quando o processo é finalizado ou morto
       subprocess.catch((err) => {
-        if (subprocess.killed || err.signal === 'SIGTERM' || err.signal === 'SIGKILL') return;
+        if (subprocess.killed || err.signal === 'SIGTERM' || err.signal === 'SIGKILL' || (err.message && (err.message.includes('SIGTERM') || err.message.includes('SIGKILL')))) return;
         console.error(`[yt-dlp] Processo finalizado com erro: ${err.message}`);
       });
 
