@@ -200,7 +200,7 @@ export class GuildQueue {
 
       this.player.play(resource);
 
-      // Envia notificação de reprodução com botões (Painel do DJ)
+      // Envia notificação de reprodução com botões (Painel do DJ 2.0)
       if (this.textChannel && this.currentTrack) {
         const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = await import('discord.js');
         
@@ -213,6 +213,14 @@ export class GuildQueue {
             new ButtonBuilder()
               .setCustomId('btn_skip')
               .setLabel('⏭️ Pular')
+              .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
+              .setCustomId('btn_shuffle')
+              .setLabel('🔀 Embaralhar')
+              .setStyle(ButtonStyle.Secondary),
+            new ButtonBuilder()
+              .setCustomId('btn_loop')
+              .setLabel('🔁 Repetir')
               .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
               .setCustomId('btn_stop')

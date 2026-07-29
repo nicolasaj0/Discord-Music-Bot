@@ -33,6 +33,22 @@ export default {
           queue.skip();
           await interaction.reply({ content: '⏭️ Música pulada.', ephemeral: true });
         } 
+        else if (interaction.customId === 'btn_shuffle') {
+          if (queue.tracks.length < 2) {
+            return interaction.reply({ content: '⚠️ É necessário ter pelo menos 2 músicas na fila para embaralhar!', ephemeral: true });
+          }
+          queue.shuffle();
+          await interaction.reply({ content: '🔀 Fila embaralhada com sucesso!', ephemeral: true });
+        }
+        else if (interaction.customId === 'btn_loop') {
+          const nextModeMap = { off: 'track', track: 'queue', queue: 'off' };
+          const labelMap = { off: 'Desativado ❌', track: 'Repetir Música Atual 🔂', queue: 'Repetir Fila Inteira 🔁' };
+          const currentMode = queue.loopMode || 'off';
+          const nextMode = nextModeMap[currentMode];
+          
+          queue.setLoopMode(nextMode);
+          await interaction.reply({ content: `🔁 Modo de repetição alterado para: **${labelMap[nextMode]}**`, ephemeral: true });
+        }
         else if (interaction.customId === 'btn_stop') {
           queue.stop();
           await interaction.reply({ content: '⏹️ Música parada e fila limpa.', ephemeral: true });
