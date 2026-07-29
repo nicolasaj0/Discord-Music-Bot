@@ -29,6 +29,6 @@
     "opusscript": "^0.0.8",
     "play-dl": "^1.9.7",
     "spotify-url-info": "^3.3.1",
-    "youtube-dl-exec": "^3.1.10"
+    "youtube-dl-exec": "^3.1.8"
   }
 }
