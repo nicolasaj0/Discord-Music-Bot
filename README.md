@@ -1,3 +1,12 @@
+---
+title: Discord Music Bot
+emoji: 🎵
+colorFrom: violet
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+---
 
 # Discord Music Bot 🎵
 
