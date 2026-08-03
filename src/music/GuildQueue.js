@@ -101,8 +101,6 @@ export class GuildQueue {
     this.clearIdleTimeout();
     if (!this.currentTrack) {
       this.playNext();
-    } else {
-      this.preResolveNextTrack();
     }
   }
 
@@ -115,8 +113,6 @@ export class GuildQueue {
     this.clearIdleTimeout();
     if (!this.currentTrack) {
       this.playNext();
-    } else {
-      this.preResolveNextTrack();
     }
   }
 
@@ -204,8 +200,10 @@ export class GuildQueue {
 
       this.player.play(resource);
 
-      // Pré-resolve o link da próxima faixa da fila em segundo plano para eliminar delay nas transições
-      this.preResolveNextTrack();
+      // Pré-resolve a próxima faixa após 5s para dar tempo do buffer de áudio estabilizar na VM
+      setTimeout(() => {
+        this.preResolveNextTrack();
+      }, 5000);
 
       // Envia notificação de reprodução com botões (Painel do DJ 2.0)
       if (this.textChannel && this.currentTrack) {
