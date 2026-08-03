@@ -95,16 +95,29 @@ export default {
       }
       // 2. VÍDEO DO YOUTUBE
       else if (validation === 'yt_video') {
-        const videoInfo = await play.video_info(query);
-        const video = videoInfo.video_details;
-        
+        const ytOptions = {
+          dumpSingleJson: true,
+          noWarnings: true,
+          extractorArgs: 'youtube:player_client=default,-android_sdkless'
+        };
+
+        if (HAS_COOKIES) {
+          ytOptions.cookies = './cookies.txt';
+        }
+
+        const videoData = await youtubedl(query, ytOptions);
+
+        if (!videoData) {
+          throw new Error('Não foi possível obter os dados do vídeo do YouTube.');
+        }
+
         tracksToAdd.push({
-          title: video.title,
-          url: video.url,
-          duration: video.durationInSec * 1000,
-          durationLabel: formatDuration(video.durationInSec * 1000),
-          thumbnail: video.thumbnails[0]?.url || null,
-          author: video.channel?.name || 'Desconhecido',
+          title: videoData.title || 'Música do YouTube',
+          url: videoData.webpage_url || videoData.url || query,
+          duration: (videoData.duration || 0) * 1000,
+          durationLabel: formatDuration((videoData.duration || 0) * 1000),
+          thumbnail: videoData.thumbnail || videoData.thumbnails?.[0]?.url || null,
+          author: videoData.uploader || videoData.channel || 'Desconhecido',
           unresolved: false,
           platform: 'youtube',
           requestedBy: requester
