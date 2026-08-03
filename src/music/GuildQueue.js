@@ -101,6 +101,8 @@ export class GuildQueue {
     this.clearIdleTimeout();
     if (!this.currentTrack) {
       this.playNext();
+    } else {
+      this.preResolveNextTrack();
     }
   }
 
@@ -113,6 +115,8 @@ export class GuildQueue {
     this.clearIdleTimeout();
     if (!this.currentTrack) {
       this.playNext();
+    } else {
+      this.preResolveNextTrack();
     }
   }
 
@@ -166,7 +170,7 @@ export class GuildQueue {
       // Obtém o stream através do youtube-dl-exec (yt-dlp)
       const ytOptions = {
         output: '-',
-        format: 'bestaudio/best',
+        format: 'bestaudio[ext=webm]/bestaudio/best',
         limitRate: '1M',
         noPlaylist: true,
         extractorArgs: 'youtube:player_client=default,-android_sdkless'
@@ -199,6 +203,9 @@ export class GuildQueue {
       resource.volume.setVolume(this.volume);
 
       this.player.play(resource);
+
+      // Pré-resolve o link da próxima faixa da fila em segundo plano para eliminar delay nas transições
+      this.preResolveNextTrack();
 
       // Envia notificação de reprodução com botões (Painel do DJ 2.0)
       if (this.textChannel && this.currentTrack) {
@@ -364,6 +371,28 @@ export class GuildQueue {
     if (this.idleTimeout) {
       clearTimeout(this.idleTimeout);
       this.idleTimeout = null;
+    }
+  }
+
+  /**
+   * Resolve em segundo plano a URL da próxima música da fila se ela for não resolvida (ex: Spotify)
+   */
+  async preResolveNextTrack() {
+    if (this.tracks.length > 0 && this.tracks[0].unresolved) {
+      const nextTrack = this.tracks[0];
+      try {
+        const searchQuery = `${nextTrack.title} ${nextTrack.author}`;
+        const searchResults = await play.search(searchQuery, { limit: 1 });
+        if (searchResults && searchResults.length > 0) {
+          nextTrack.url = searchResults[0].url;
+          nextTrack.unresolved = false;
+          if (searchResults[0].thumbnails && searchResults[0].thumbnails[0]) {
+            nextTrack.thumbnail = searchResults[0].thumbnails[0].url;
+          }
+        }
+      } catch (e) {
+        // Silenciosamente ignora falha de pré-resolução, será tentado novamente no playNext
+      }
     }
   }
 
